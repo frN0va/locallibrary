@@ -26,6 +26,7 @@ from django.urls import include
 
 urlpatterns += [
     path('catalog/', include('catalog.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 # Add URL maps to redirect the base URL to our application
@@ -39,3 +40,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+from .api import api
+urlpatterns += [
+    path('api/', api.urls),
+    path('accounts/', include('allauth.urls')),
+]

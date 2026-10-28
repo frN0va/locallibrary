@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Chat Rooms</title>
+  </head>
+  <body>
+    <form>
+      <label for="room-name-input">What chat room would you like to enter?</label>
+      <input id="room-name-input" type="text" size="50">
+      <button id="room-name-submit" type="submit">Enter</button>
+    </form>
+    <script>
+      document.querySelector("#room-name-input").focus();
+      document.querySelector("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const roomName = document.querySelector("#room-name-input").value;
+        window.location.pathname = `/chat/${roomName}/`;
+      });
+    </script>
+  </body>
+</html>

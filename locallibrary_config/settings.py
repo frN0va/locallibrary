@@ -44,6 +44,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +52,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'catalog.apps.CatalogConfig',
+    'chat',
+    'allauth',
+    'allauth.account',
+    'ninja',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'locallibrary_config.urls'
@@ -88,7 +94,20 @@ WSGI_APPLICATION = 'locallibrary_config.wsgi.application'
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+    "default": env.db(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
+}
+DATABASES["default"].setdefault("TEST", {})["NAME"] = BASE_DIR / "test_db.sqlite3"
+
+ASGI_APPLICATION = "locallibrary_config.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env("REDIS_URL", default="redis://127.0.0.1:6379/0")],
+            "socket_timeout": env.float("REDIS_SOCKET_TIMEOUT", default=5),
+        },
+    },
 }
 
 
@@ -138,6 +157,14 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+LOGIN_REDIRECT_URL = '/'
 
 
 # Print errors to the console so they show up in `docker compose logs`.

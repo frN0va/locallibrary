@@ -25,6 +25,12 @@
             <li><a href="{% url 'index' %}">Home</a></li>
             <li><a href="{% url 'books' %}">All books</a></li>
             <li><a href="{% url 'authors' %}">All authors</a></li>
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'my-borrowed' %}">My borrowed books</a></li>
+              <li><a href="{% url 'account_logout' %}">Logout</a></li>
+            {% else %}
+              <li><a href="{% url 'account_login' %}">Login</a></li>
+            {% endif %}
           </ul>
           {% endblock %}
         </div>
